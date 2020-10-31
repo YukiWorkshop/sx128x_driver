@@ -1,5 +1,5 @@
 /*
-    This file is part of SX1280 Portable driver.
+    This file is part of SX128x Portable driver.
     Copyright (C) 2020 ReimuNotMoe
 
     This program is based on sx1280-driver from Semtech S.A.,
@@ -37,11 +37,11 @@
 
 
 /*!
- * \brief Represents the SX1280 and its features
+ * \brief Represents the SX128x and its features
  *
- * It implements the commands the SX1280 can understands
+ * It implements the commands the SX128x can understands
  */
-class SX1280 {
+class SX128x {
 public:
 	enum {
 		/*!
@@ -1124,9 +1124,9 @@ public:
 	 * \brief Instantiates a SX1280 object and provides API functions to communicates with the radio
 	 *
 	 */
-	SX1280() = default;
+	SX128x() = default;
 
-	virtual ~SX1280() = default;
+	virtual ~SX128x() = default;
 
 private:
 	std::mutex IOLock;

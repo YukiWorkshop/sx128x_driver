@@ -22,27 +22,27 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "sx1280.hpp"
+#include "SX128x.hpp"
 
-void SX1280::Init() {
+void SX128x::Init() {
 	Reset();
 	Wakeup();
 	SetRegistersDefault();
 }
 
-void SX1280::SetRegistersDefault( void )
+void SX128x::SetRegistersDefault(void )
 {
 	for( int16_t i = 0; i < sizeof( RadioRegsInit ) / sizeof( RadioRegisters_t ); i++ ) {
 		WriteRegister( RadioRegsInit[i].Addr, RadioRegsInit[i].Value );
 	}
 }
 
-uint16_t SX1280::GetFirmwareVersion( void )
+uint16_t SX128x::GetFirmwareVersion(void )
 {
 	return( ( ( ReadRegister( REG_LR_FIRMWARE_VERSION_MSB ) ) << 8 ) | ( ReadRegister( REG_LR_FIRMWARE_VERSION_MSB + 1 ) ) );
 }
 
-SX1280::RadioStatus_t SX1280::GetStatus( void )
+SX128x::RadioStatus_t SX128x::GetStatus(void )
 {
 	uint8_t stat = 0;
 	RadioStatus_t status;
@@ -52,12 +52,12 @@ SX1280::RadioStatus_t SX1280::GetStatus( void )
 	return( status );
 }
 
-SX1280::RadioOperatingModes_t SX1280::GetOpMode( void )
+SX128x::RadioOperatingModes_t SX128x::GetOpMode(void )
 {
 	return( OperatingMode );
 }
 
-void SX1280::SetSleep( SleepParams_t sleepConfig )
+void SX128x::SetSleep(SleepParams_t sleepConfig )
 {
 	uint8_t sleep = ( sleepConfig.WakeUpRTC << 3 ) |
 			( sleepConfig.InstructionRamRetention << 2 ) |
@@ -68,7 +68,7 @@ void SX1280::SetSleep( SleepParams_t sleepConfig )
 	WriteCommand( RADIO_SET_SLEEP, &sleep, 1 );
 }
 
-void SX1280::SetStandby( RadioStandbyModes_t standbyConfig )
+void SX128x::SetStandby(RadioStandbyModes_t standbyConfig )
 {
 	WriteCommand( RADIO_SET_STANDBY, ( uint8_t* )&standbyConfig, 1 );
 	if (standbyConfig == STDBY_RC )
@@ -81,13 +81,13 @@ void SX1280::SetStandby( RadioStandbyModes_t standbyConfig )
 	}
 }
 
-void SX1280::SetFs( void )
+void SX128x::SetFs(void )
 {
 	WriteCommand( RADIO_SET_FS, 0, 0 );
 	OperatingMode = MODE_FS;
 }
 
-void SX1280::SetTx( TickTime_t timeout )
+void SX128x::SetTx(TickTime_t timeout )
 {
 	uint8_t buf[3];
 	buf[0] = timeout.PeriodBase;
@@ -109,7 +109,7 @@ void SX1280::SetTx( TickTime_t timeout )
 	OperatingMode = MODE_TX;
 }
 
-void SX1280::SetRx( TickTime_t timeout )
+void SX128x::SetRx(TickTime_t timeout )
 {
 	uint8_t buf[3];
 	buf[0] = timeout.PeriodBase;
@@ -131,7 +131,7 @@ void SX1280::SetRx( TickTime_t timeout )
 	OperatingMode = MODE_RX;
 }
 
-void SX1280::SetRxDutyCycle( RadioTickSizes_t periodBase, uint16_t periodBaseCountRx, uint16_t periodBaseCountSleep )
+void SX128x::SetRxDutyCycle(RadioTickSizes_t periodBase, uint16_t periodBaseCountRx, uint16_t periodBaseCountSleep )
 {
 	uint8_t buf[5];
 
@@ -147,7 +147,7 @@ void SX1280::SetRxDutyCycle( RadioTickSizes_t periodBase, uint16_t periodBaseCou
 	OperatingMode = MODE_RX;
 }
 
-void SX1280::SetCad( void )
+void SX128x::SetCad(void )
 {
 	HalPostTx();
 	HalPreRx();
@@ -155,21 +155,21 @@ void SX1280::SetCad( void )
 	OperatingMode = MODE_CAD;
 }
 
-void SX1280::SetTxContinuousWave( void )
+void SX128x::SetTxContinuousWave(void )
 {
 	HalPostRx();
 	HalPreTx();
 	WriteCommand( RADIO_SET_TXCONTINUOUSWAVE, 0, 0 );
 }
 
-void SX1280::SetTxContinuousPreamble( void )
+void SX128x::SetTxContinuousPreamble(void )
 {
 	HalPostRx();
 	HalPreTx();
 	WriteCommand( RADIO_SET_TXCONTINUOUSPREAMBLE, 0, 0 );
 }
 
-void SX1280::SetPacketType( RadioPacketTypes_t packetType )
+void SX128x::SetPacketType(RadioPacketTypes_t packetType )
 {
 	// Save packet type internally to avoid questioning the radio
 	this->PacketType = packetType;
@@ -177,7 +177,7 @@ void SX1280::SetPacketType( RadioPacketTypes_t packetType )
 	WriteCommand( RADIO_SET_PACKETTYPE, ( uint8_t* )&packetType, 1 );
 }
 
-SX1280::RadioPacketTypes_t SX1280::GetPacketType( bool returnLocalCopy )
+SX128x::RadioPacketTypes_t SX128x::GetPacketType(bool returnLocalCopy )
 {
 	RadioPacketTypes_t packetType = PACKET_TYPE_NONE;
 	if (returnLocalCopy == false )
@@ -195,7 +195,7 @@ SX1280::RadioPacketTypes_t SX1280::GetPacketType( bool returnLocalCopy )
 	return packetType;
 }
 
-void SX1280::SetRfFrequency( uint32_t rfFrequency )
+void SX128x::SetRfFrequency(uint32_t rfFrequency )
 {
 	uint8_t buf[3];
 	uint32_t freq = 0;
@@ -207,7 +207,7 @@ void SX1280::SetRfFrequency( uint32_t rfFrequency )
 	WriteCommand( RADIO_SET_RFFREQUENCY, buf, 3 );
 }
 
-void SX1280::SetTxParams( int8_t power, RadioRampTimes_t rampTime )
+void SX128x::SetTxParams(int8_t power, RadioRampTimes_t rampTime )
 {
 	uint8_t buf[2];
 
@@ -218,13 +218,13 @@ void SX1280::SetTxParams( int8_t power, RadioRampTimes_t rampTime )
 	WriteCommand( RADIO_SET_TXPARAMS, buf, 2 );
 }
 
-void SX1280::SetCadParams( RadioLoRaCadSymbols_t cadSymbolNum )
+void SX128x::SetCadParams(RadioLoRaCadSymbols_t cadSymbolNum )
 {
 	WriteCommand( RADIO_SET_CADPARAMS, ( uint8_t* )&cadSymbolNum, 1 );
 	OperatingMode = MODE_CAD;
 }
 
-void SX1280::SetBufferBaseAddresses( uint8_t txBaseAddress, uint8_t rxBaseAddress )
+void SX128x::SetBufferBaseAddresses(uint8_t txBaseAddress, uint8_t rxBaseAddress )
 {
 	uint8_t buf[2];
 
@@ -233,7 +233,7 @@ void SX1280::SetBufferBaseAddresses( uint8_t txBaseAddress, uint8_t rxBaseAddres
 	WriteCommand( RADIO_SET_BUFFERBASEADDRESS, buf, 2 );
 }
 
-void SX1280::SetModulationParams( ModulationParams_t *modParams )
+void SX128x::SetModulationParams(ModulationParams_t *modParams )
 {
 	uint8_t buf[3];
 
@@ -277,7 +277,7 @@ void SX1280::SetModulationParams( ModulationParams_t *modParams )
 	WriteCommand( RADIO_SET_MODULATIONPARAMS, buf, 3 );
 }
 
-void SX1280::SetPacketParams( PacketParams_t *packetParams )
+void SX128x::SetPacketParams(PacketParams_t *packetParams )
 {
 	uint8_t buf[7];
 	// Check if required configuration corresponds to the stored packet type
@@ -339,12 +339,12 @@ void SX1280::SetPacketParams( PacketParams_t *packetParams )
 	WriteCommand( RADIO_SET_PACKETPARAMS, buf, 7 );
 }
 
-void SX1280::ForcePreambleLength( RadioPreambleLengths_t preambleLength )
+void SX128x::ForcePreambleLength(RadioPreambleLengths_t preambleLength )
 {
 	this->WriteRegister( REG_LR_PREAMBLELENGTH, ( this->ReadRegister( REG_LR_PREAMBLELENGTH ) & MASK_FORCE_PREAMBLELENGTH ) | preambleLength );
 }
 
-void SX1280::GetRxBufferStatus( uint8_t *rxPayloadLength, uint8_t *rxStartBufferPointer )
+void SX128x::GetRxBufferStatus(uint8_t *rxPayloadLength, uint8_t *rxStartBufferPointer )
 {
 	uint8_t status[2];
 
@@ -370,7 +370,7 @@ void SX1280::GetRxBufferStatus( uint8_t *rxPayloadLength, uint8_t *rxStartBuffer
 	*rxStartBufferPointer = status[1];
 }
 
-void SX1280::GetPacketStatus( PacketStatus_t *packetStatus )
+void SX128x::GetPacketStatus(PacketStatus_t *packetStatus )
 {
 	uint8_t status[5];
 
@@ -446,7 +446,7 @@ void SX1280::GetPacketStatus( PacketStatus_t *packetStatus )
 	}
 }
 
-int8_t SX1280::GetRssiInst( void )
+int8_t SX128x::GetRssiInst(void )
 {
 	uint8_t raw = 0;
 
@@ -455,7 +455,7 @@ int8_t SX1280::GetRssiInst( void )
 	return ( int8_t ) ( -raw / 2 );
 }
 
-void SX1280::SetDioIrqParams( uint16_t irqMask, uint16_t dio1Mask, uint16_t dio2Mask, uint16_t dio3Mask )
+void SX128x::SetDioIrqParams(uint16_t irqMask, uint16_t dio1Mask, uint16_t dio2Mask, uint16_t dio3Mask )
 {
 	uint8_t buf[8];
 
@@ -470,14 +470,14 @@ void SX1280::SetDioIrqParams( uint16_t irqMask, uint16_t dio1Mask, uint16_t dio2
 	WriteCommand( RADIO_SET_DIOIRQPARAMS, buf, 8 );
 }
 
-uint16_t SX1280::GetIrqStatus( void )
+uint16_t SX128x::GetIrqStatus(void )
 {
 	uint8_t irqStatus[2];
 	ReadCommand( RADIO_GET_IRQSTATUS, irqStatus, 2 );
 	return ( irqStatus[0] << 8 ) | irqStatus[1];
 }
 
-void SX1280::ClearIrqStatus( uint16_t irqMask )
+void SX128x::ClearIrqStatus(uint16_t irqMask )
 {
 	uint8_t buf[2];
 
@@ -486,7 +486,7 @@ void SX1280::ClearIrqStatus( uint16_t irqMask )
 	WriteCommand( RADIO_CLR_IRQSTATUS, buf, 2 );
 }
 
-void SX1280::Calibrate( CalibrationParams_t calibParam )
+void SX128x::Calibrate(CalibrationParams_t calibParam )
 {
 	uint8_t cal = ( calibParam.ADCBulkPEnable << 5 ) |
 		      ( calibParam.ADCBulkNEnable << 4 ) |
@@ -497,17 +497,17 @@ void SX1280::Calibrate( CalibrationParams_t calibParam )
 	WriteCommand( RADIO_CALIBRATE, &cal, 1 );
 }
 
-void SX1280::SetRegulatorMode( RadioRegulatorModes_t mode )
+void SX128x::SetRegulatorMode(RadioRegulatorModes_t mode )
 {
 	WriteCommand( RADIO_SET_REGULATORMODE, ( uint8_t* )&mode, 1 );
 }
 
-void SX1280::SetSaveContext( void )
+void SX128x::SetSaveContext(void )
 {
 	WriteCommand( RADIO_SET_SAVECONTEXT, 0, 0 );
 }
 
-void SX1280::SetAutoTx( uint16_t time )
+void SX128x::SetAutoTx(uint16_t time )
 {
 	uint16_t compensatedTime = time - ( uint16_t )AUTO_TX_OFFSET;
 	uint8_t buf[2];
@@ -517,28 +517,28 @@ void SX1280::SetAutoTx( uint16_t time )
 	WriteCommand( RADIO_SET_AUTOTX, buf, 2 );
 }
 
-void SX1280::StopAutoTx( void )
+void SX128x::StopAutoTx(void )
 {
 	uint8_t buf[2] = {0x00, 0x00};
 	WriteCommand( RADIO_SET_AUTOTX, buf, 2 );
 }
 
-void SX1280::SetAutoFs( bool enableAutoFs )
+void SX128x::SetAutoFs(bool enableAutoFs )
 {
 	WriteCommand( RADIO_SET_AUTOFS, ( uint8_t * )&enableAutoFs, 1 );
 }
 
-void SX1280::SetLongPreamble( bool enable )
+void SX128x::SetLongPreamble(bool enable )
 {
 	WriteCommand( RADIO_SET_LONGPREAMBLE, ( uint8_t * )&enable, 1 );
 }
 
-void SX1280::SetPayload( uint8_t *buffer, uint8_t size, uint8_t offset )
+void SX128x::SetPayload(uint8_t *buffer, uint8_t size, uint8_t offset )
 {
 	WriteBuffer( offset, buffer, size );
 }
 
-uint8_t SX1280::GetPayload( uint8_t *buffer, uint8_t *size , uint8_t maxSize )
+uint8_t SX128x::GetPayload(uint8_t *buffer, uint8_t *size , uint8_t maxSize )
 {
 	uint8_t offset;
 
@@ -551,13 +551,13 @@ uint8_t SX1280::GetPayload( uint8_t *buffer, uint8_t *size , uint8_t maxSize )
 	return 0;
 }
 
-void SX1280::SendPayload( uint8_t *payload, uint8_t size, TickTime_t timeout, uint8_t offset )
+void SX128x::SendPayload(uint8_t *payload, uint8_t size, TickTime_t timeout, uint8_t offset )
 {
 	SetPayload( payload, size, offset );
 	SetTx( timeout );
 }
 
-uint8_t SX1280::SetSyncWord( uint8_t syncWordIdx, uint8_t *syncWord )
+uint8_t SX128x::SetSyncWord(uint8_t syncWordIdx, uint8_t *syncWord )
 {
 	uint16_t addr;
 	uint8_t syncwordSize = 0;
@@ -620,13 +620,13 @@ uint8_t SX1280::SetSyncWord( uint8_t syncWordIdx, uint8_t *syncWord )
 	return 0;
 }
 
-void SX1280::SetSyncWordErrorTolerance( uint8_t ErrorBits )
+void SX128x::SetSyncWordErrorTolerance(uint8_t ErrorBits )
 {
 	ErrorBits = ( ReadRegister( REG_LR_SYNCWORDTOLERANCE ) & 0xF0 ) | ( ErrorBits & 0x0F );
 	WriteRegister( REG_LR_SYNCWORDTOLERANCE, ErrorBits );
 }
 
-uint8_t SX1280::SetCrcSeed( uint8_t *seed )
+uint8_t SX128x::SetCrcSeed(uint8_t *seed )
 {
 	uint8_t updated = 0;
 	switch( GetPacketType( true ) )
@@ -648,7 +648,7 @@ uint8_t SX1280::SetCrcSeed( uint8_t *seed )
 	return updated;
 }
 
-void SX1280::SetBleAccessAddress( uint32_t accessAddress )
+void SX128x::SetBleAccessAddress(uint32_t accessAddress )
 {
 	this->WriteRegister( REG_LR_BLE_ACCESS_ADDRESS, ( accessAddress >> 24 ) & 0x000000FF );
 	this->WriteRegister( REG_LR_BLE_ACCESS_ADDRESS + 1, ( accessAddress >> 16 ) & 0x000000FF );
@@ -656,12 +656,12 @@ void SX1280::SetBleAccessAddress( uint32_t accessAddress )
 	this->WriteRegister( REG_LR_BLE_ACCESS_ADDRESS + 3, accessAddress & 0x000000FF );
 }
 
-void SX1280::SetBleAdvertizerAccessAddress( void )
+void SX128x::SetBleAdvertizerAccessAddress(void )
 {
 	this->SetBleAccessAddress( BLE_ADVERTIZER_ACCESS_ADDRESS );
 }
 
-void SX1280::SetCrcPolynomial( uint16_t polynomial )
+void SX128x::SetCrcPolynomial(uint16_t polynomial )
 {
 	uint8_t val[2];
 
@@ -679,7 +679,7 @@ void SX1280::SetCrcPolynomial( uint16_t polynomial )
 	}
 }
 
-void SX1280::SetWhiteningSeed( uint8_t seed )
+void SX128x::SetWhiteningSeed(uint8_t seed )
 {
 	switch( GetPacketType( true ) )
 	{
@@ -693,24 +693,24 @@ void SX1280::SetWhiteningSeed( uint8_t seed )
 	}
 }
 
-void SX1280::EnableManualGain( void )
+void SX128x::EnableManualGain(void )
 {
 	this->WriteRegister( REG_ENABLE_MANUAL_GAIN_CONTROL, this->ReadRegister( REG_ENABLE_MANUAL_GAIN_CONTROL ) | MASK_MANUAL_GAIN_CONTROL );
 	this->WriteRegister( REG_DEMOD_DETECTION, this->ReadRegister( REG_DEMOD_DETECTION ) & MASK_DEMOD_DETECTION );
 }
 
-void SX1280::DisableManualGain( void )
+void SX128x::DisableManualGain(void )
 {
 	this->WriteRegister( REG_ENABLE_MANUAL_GAIN_CONTROL, this->ReadRegister( REG_ENABLE_MANUAL_GAIN_CONTROL ) & (~MASK_MANUAL_GAIN_CONTROL) );
 	this->WriteRegister( REG_DEMOD_DETECTION, this->ReadRegister( REG_DEMOD_DETECTION ) | (~MASK_DEMOD_DETECTION) );
 }
 
-void SX1280::SetManualGainValue( uint8_t gain )
+void SX128x::SetManualGainValue(uint8_t gain )
 {
 	this->WriteRegister( REG_MANUAL_GAIN_VALUE, ( this->ReadRegister( REG_MANUAL_GAIN_VALUE ) & MASK_MANUAL_GAIN_VALUE ) | gain );
 }
 
-void SX1280::SetLNAGainSetting( const RadioLnaSettings_t lnaSetting )
+void SX128x::SetLNAGainSetting(const RadioLnaSettings_t lnaSetting )
 {
 	switch(lnaSetting)
 	{
@@ -727,7 +727,7 @@ void SX1280::SetLNAGainSetting( const RadioLnaSettings_t lnaSetting )
 	}
 }
 
-void SX1280::SetRangingIdLength( RadioRangingIdCheckLengths_t length )
+void SX128x::SetRangingIdLength(RadioRangingIdCheckLengths_t length )
 {
 	switch( GetPacketType( true ) )
 	{
@@ -739,7 +739,7 @@ void SX1280::SetRangingIdLength( RadioRangingIdCheckLengths_t length )
 	}
 }
 
-void SX1280::SetDeviceRangingAddress( uint32_t address )
+void SX128x::SetDeviceRangingAddress(uint32_t address )
 {
 	uint8_t addrArray[] = { static_cast<uint8_t>(address >> 24), static_cast<uint8_t>(address >> 16),
 				static_cast<uint8_t>(address >> 8), static_cast<uint8_t>(address) };
@@ -754,7 +754,7 @@ void SX1280::SetDeviceRangingAddress( uint32_t address )
 	}
 }
 
-void SX1280::SetRangingRequestAddress( uint32_t address )
+void SX128x::SetRangingRequestAddress(uint32_t address )
 {
 	uint8_t addrArray[] = { static_cast<uint8_t>(address >> 24), static_cast<uint8_t>(address >> 16),
 				static_cast<uint8_t>(address >> 8), static_cast<uint8_t>(address) };
@@ -769,7 +769,7 @@ void SX1280::SetRangingRequestAddress( uint32_t address )
 	}
 }
 
-double SX1280::GetRangingResult( RadioRangingResultTypes_t resultType )
+double SX128x::GetRangingResult(RadioRangingResultTypes_t resultType )
 {
 	uint32_t valLsb = 0;
 	double val = 0.0;
@@ -810,7 +810,7 @@ double SX1280::GetRangingResult( RadioRangingResultTypes_t resultType )
 	return val;
 }
 
-uint8_t SX1280::GetRangingPowerDeltaThresholdIndicator( void )
+uint8_t SX128x::GetRangingPowerDeltaThresholdIndicator(void )
 {
 	SetStandby( STDBY_XOSC );
 	WriteRegister( 0x97F, ReadRegister( 0x97F ) | ( 1 << 1 ) ); // enable LoRa modem clock
@@ -818,7 +818,7 @@ uint8_t SX1280::GetRangingPowerDeltaThresholdIndicator( void )
 	return ReadRegister( REG_RANGING_RSSI );
 }
 
-void SX1280::SetRangingCalibration( uint16_t cal )
+void SX128x::SetRangingCalibration(uint16_t cal )
 {
 	switch( GetPacketType( true ) )
 	{
@@ -831,7 +831,7 @@ void SX1280::SetRangingCalibration( uint16_t cal )
 	}
 }
 
-void SX1280::RangingClearFilterResult( void )
+void SX128x::RangingClearFilterResult(void )
 {
 	uint8_t regVal = ReadRegister( REG_LR_RANGINGRESULTCLEARREG );
 
@@ -840,13 +840,13 @@ void SX1280::RangingClearFilterResult( void )
 	WriteRegister( REG_LR_RANGINGRESULTCLEARREG, regVal & ( ~( 1 << 5 ) ) );
 }
 
-void SX1280::RangingSetFilterNumSamples( uint8_t num )
+void SX128x::RangingSetFilterNumSamples(uint8_t num )
 {
 	// Silently set 8 as minimum value
 	WriteRegister( REG_LR_RANGINGFILTERWINDOWSIZE, ( num < DEFAULT_RANGING_FILTER_SIZE ) ? DEFAULT_RANGING_FILTER_SIZE : num );
 }
 
-void SX1280::SetRangingRole( RadioRangingRoles_t role )
+void SX128x::SetRangingRole(RadioRangingRoles_t role )
 {
 	uint8_t buf[1];
 
@@ -854,7 +854,7 @@ void SX1280::SetRangingRole( RadioRangingRoles_t role )
 	WriteCommand( RADIO_SET_RANGING_ROLE, &buf[0], 1 );
 }
 
-double SX1280::GetFrequencyError( )
+double SX128x::GetFrequencyError( )
 {
 	uint8_t efeRaw[3] = {0};
 	uint32_t efe = 0;
@@ -888,7 +888,7 @@ double SX1280::GetFrequencyError( )
 //	this->PollingMode = true;
 //}
 
-int32_t SX1280::complement2( const uint32_t num, const uint8_t bitCnt )
+int32_t SX128x::complement2(const uint32_t num, const uint8_t bitCnt )
 {
 	int32_t retVal = ( int32_t )num;
 	if (num >= 2<<( bitCnt - 2 ) )
@@ -898,7 +898,7 @@ int32_t SX1280::complement2( const uint32_t num, const uint8_t bitCnt )
 	return retVal;
 }
 
-int32_t SX1280::GetLoRaBandwidth( )
+int32_t SX128x::GetLoRaBandwidth( )
 {
 	int32_t bwValue = 0;
 
@@ -944,7 +944,7 @@ int32_t SX1280::GetLoRaBandwidth( )
 //	}
 //}
 
-void SX1280::ProcessIrqs() {
+void SX128x::ProcessIrqs() {
 	RadioPacketTypes_t packetType = PACKET_TYPE_NONE;
 
 //	if (this->PollingMode == true )
@@ -1199,7 +1199,7 @@ void SX1280::ProcessIrqs() {
 	}
 }
 
-uint16_t SX1280::GetTimeOnAir(const SX1280::ModulationParams_t &modparams, const SX1280::PacketParams_t &pktparams) {
+uint16_t SX128x::GetTimeOnAir(const SX128x::ModulationParams_t &modparams, const SX128x::PacketParams_t &pktparams) {
 	uint16_t result = 2000;
 	double tPayload = 0.0;
 
@@ -1395,24 +1395,24 @@ uint16_t SX1280::GetTimeOnAir(const SX1280::ModulationParams_t &modparams, const
 	return result;
 }
 
-void SX1280::HalSpiRead(uint8_t *buffer_in, uint16_t size) {
+void SX128x::HalSpiRead(uint8_t *buffer_in, uint16_t size) {
 	uint8_t useless[size];
 	memset(useless, 0, size);
 	HalSpiTransfer(buffer_in, useless, size);
 }
 
-void SX1280::HalSpiWrite(const uint8_t *buffer_out, uint16_t size) {
+void SX128x::HalSpiWrite(const uint8_t *buffer_out, uint16_t size) {
 	uint8_t useless[size];
 	HalSpiTransfer(useless, buffer_out, size);
 }
 
-void SX1280::WaitOnBusy() {
+void SX128x::WaitOnBusy() {
 	while (HalGpioRead(GPIO_PIN_BUSY)) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 }
 
-void SX1280::Reset(void) {
+void SX128x::Reset(void) {
 	std::lock_guard<std::mutex> lg(IOLock);
 
 	HalGpioWrite(GPIO_PIN_RESET, 0);
@@ -1422,7 +1422,7 @@ void SX1280::Reset(void) {
 
 }
 
-void SX1280::Wakeup(void) {
+void SX128x::Wakeup(void) {
 	std::lock_guard<std::mutex> lg(IOLock);
 
 	if (SX1280_DEBUG) {
@@ -1441,7 +1441,7 @@ void SX1280::Wakeup(void) {
 	}
 }
 
-void SX1280::WriteCommand(SX1280::RadioCommands_t opcode, uint8_t *buffer, uint16_t size) {
+void SX128x::WriteCommand(SX128x::RadioCommands_t opcode, uint8_t *buffer, uint16_t size) {
 	auto *merged_buf = (uint8_t *)alloca(size+1);
 
 	merged_buf[0] = opcode;
@@ -1469,7 +1469,7 @@ void SX1280::WriteCommand(SX1280::RadioCommands_t opcode, uint8_t *buffer, uint1
 	}
 }
 
-void SX1280::ReadCommand(SX1280::RadioCommands_t opcode, uint8_t *buffer, uint16_t size) {
+void SX128x::ReadCommand(SX128x::RadioCommands_t opcode, uint8_t *buffer, uint16_t size) {
 	std::lock_guard<std::mutex> lg(IOLock);
 
 	WaitOnBusy();
@@ -1496,7 +1496,7 @@ void SX1280::ReadCommand(SX1280::RadioCommands_t opcode, uint8_t *buffer, uint16
 	WaitOnBusy();
 }
 
-void SX1280::WriteRegister(uint16_t address, uint8_t *buffer, uint16_t size) {
+void SX128x::WriteRegister(uint16_t address, uint8_t *buffer, uint16_t size) {
 	std::lock_guard<std::mutex> lg(IOLock);
 
 	if (SX1280_DEBUG) {
@@ -1526,11 +1526,11 @@ void SX1280::WriteRegister(uint16_t address, uint8_t *buffer, uint16_t size) {
 	}
 }
 
-void SX1280::WriteRegister(uint16_t address, uint8_t value) {
+void SX128x::WriteRegister(uint16_t address, uint8_t value) {
 	WriteRegister(address, &value, 1);
 }
 
-void SX1280::ReadRegister(uint16_t address, uint8_t *buffer, uint16_t size) {
+void SX128x::ReadRegister(uint16_t address, uint8_t *buffer, uint16_t size) {
 	std::lock_guard<std::mutex> lg(IOLock);
 
 	WaitOnBusy();
@@ -1551,14 +1551,14 @@ void SX1280::ReadRegister(uint16_t address, uint8_t *buffer, uint16_t size) {
 	WaitOnBusy();
 }
 
-uint8_t SX1280::ReadRegister(uint16_t address) {
+uint8_t SX128x::ReadRegister(uint16_t address) {
 	uint8_t data;
 
 	ReadRegister( address, &data, 1 );
 	return data;
 }
 
-void SX1280::WriteBuffer(uint8_t offset, uint8_t *buffer, uint8_t size) {
+void SX128x::WriteBuffer(uint8_t offset, uint8_t *buffer, uint8_t size) {
 	std::lock_guard<std::mutex> lg(IOLock);
 
 	WaitOnBusy();
@@ -1576,7 +1576,7 @@ void SX1280::WriteBuffer(uint8_t offset, uint8_t *buffer, uint8_t size) {
 	WaitOnBusy();
 }
 
-void SX1280::ReadBuffer(uint8_t offset, uint8_t *buffer, uint8_t size) {
+void SX128x::ReadBuffer(uint8_t offset, uint8_t *buffer, uint8_t size) {
 	std::lock_guard<std::mutex> lg(IOLock);
 
 	WaitOnBusy();

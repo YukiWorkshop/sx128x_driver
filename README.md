@@ -1,5 +1,7 @@
-# sx1280_driver
-Portable SX1280 driver written in C++.
+# sx128x_driver
+Portable SX128x driver written in C++.
+
+Supported chips: `SX1280`, `SX1281`, `SX1282`. Only `SX1280` is tested.
 
 ## Requirements
 - C++14
