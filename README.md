@@ -10,7 +10,7 @@ Supported chips: `SX1280`, `SX1281`, `SX1282`. Only `SX1280` is tested.
 - Easy to use
 - Should work on nearly all platforms
 - Multiple instances
-- No macros, and no collisions
+- No macros, no global scope shit, and thus no collisions with other libs
 
 ## Usage
 
@@ -33,6 +33,9 @@ And these if you have RF switches / external RF PA (optional):
 **Enable DIOs & process GPIO interrupts by yourself.** When DIO fires, simply call `SX1280::ProcessIrqs()`. Everything is thread-safe.
  
 That's all. The code is well documented. Most usages are exactly same as the SX1280 mbed driver.
+
+## Examples
+[sx128x_linux_driver](https://github.com/YukiWorkshop/sx128x_linux_driver) is a good demonstration of how to use this driver in Linux.
 
 ## License
 LGPLv3
