@@ -1840,7 +1840,7 @@ public:
 	 * \brief Process the analysis of radio IRQs and calls callback functions
 	 *        depending on radio state
 	 */
-	void ProcessIrqs(void);
+	void ProcessIrqs();
 
 	/*!
 	 * \brief Force the preamble length in GFSK and BLE mode

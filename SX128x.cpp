@@ -957,7 +957,7 @@ int32_t SX128x::GetLoRaBandwidth( )
 //}
 
 void SX128x::ProcessIrqs() {
-	std::lock_guard<std::mutex> lg(IOLock2);
+	std::unique_lock<std::mutex> lg(IOLock2);
 
 	RadioPacketTypes_t packetType = PACKET_TYPE_NONE;
 
@@ -978,6 +978,8 @@ void SX128x::ProcessIrqs() {
 	packetType = GetPacketType( true );
 	uint16_t irqRegs = GetIrqStatus();
 	ClearIrqStatus( IRQ_RADIO_ALL );
+
+	lg.unlock();
 
 	auto& txDone = callbacks.txDone;
 	auto& rxDone = callbacks.rxDone;
