@@ -1277,6 +1277,8 @@ public:
 	 */
 	void WaitOnBusy();
 
+	void WaitOnBusyLong();
+
 	/*!
 	 * \brief Resets the radio
 	 */

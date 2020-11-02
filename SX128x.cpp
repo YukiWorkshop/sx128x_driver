@@ -1408,6 +1408,12 @@ void SX128x::HalSpiWrite(const uint8_t *buffer_out, uint16_t size) {
 
 void SX128x::WaitOnBusy() {
 	while (HalGpioRead(GPIO_PIN_BUSY)) {
+		std::this_thread::sleep_for(std::chrono::microseconds(10));
+	}
+}
+
+void SX128x::WaitOnBusyLong() {
+	while (HalGpioRead(GPIO_PIN_BUSY)) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 }
@@ -1434,7 +1440,7 @@ void SX128x::Wakeup(void) {
 	HalSpiWrite(buf, 2);
 
 	// Wait for chip to be ready.
-	WaitOnBusy();
+	WaitOnBusyLong();
 
 	if (SX1280_DEBUG) {
 		printf("SX1280: Wakeup done\n");
