@@ -70,6 +70,8 @@ void SX128x::SetSleep(SleepParams_t sleepConfig )
 
 void SX128x::SetStandby(RadioStandbyModes_t standbyConfig )
 {
+	std::lock_guard<std::mutex> lg(IOLock2);
+
 	WriteCommand( RADIO_SET_STANDBY, ( uint8_t* )&standbyConfig, 1 );
 	if (standbyConfig == STDBY_RC )
 	{
@@ -89,6 +91,8 @@ void SX128x::SetFs(void )
 
 void SX128x::SetTx(TickTime_t timeout )
 {
+	std::lock_guard<std::mutex> lg(IOLock2);
+
 	uint8_t buf[3];
 	buf[0] = timeout.PeriodBase;
 	buf[1] = ( uint8_t )( ( timeout.PeriodBaseCount >> 8 ) & 0x00FF );
@@ -111,6 +115,8 @@ void SX128x::SetTx(TickTime_t timeout )
 
 void SX128x::SetRx(TickTime_t timeout )
 {
+	std::lock_guard<std::mutex> lg(IOLock2);
+
 	uint8_t buf[3];
 	buf[0] = timeout.PeriodBase;
 	buf[1] = ( uint8_t )( ( timeout.PeriodBaseCount >> 8 ) & 0x00FF );
@@ -149,6 +155,8 @@ void SX128x::SetRxDutyCycle(RadioTickSizes_t periodBase, uint16_t periodBaseCoun
 
 void SX128x::SetCad(void )
 {
+	std::lock_guard<std::mutex> lg(IOLock2);
+
 	HalPostTx();
 	HalPreRx();
 	WriteCommand( RADIO_SET_CAD, 0, 0 );
@@ -157,6 +165,8 @@ void SX128x::SetCad(void )
 
 void SX128x::SetTxContinuousWave(void )
 {
+	std::lock_guard<std::mutex> lg(IOLock2);
+
 	HalPostRx();
 	HalPreTx();
 	WriteCommand( RADIO_SET_TXCONTINUOUSWAVE, 0, 0 );
@@ -164,6 +174,8 @@ void SX128x::SetTxContinuousWave(void )
 
 void SX128x::SetTxContinuousPreamble(void )
 {
+	std::lock_guard<std::mutex> lg(IOLock2);
+
 	HalPostRx();
 	HalPreTx();
 	WriteCommand( RADIO_SET_TXCONTINUOUSPREAMBLE, 0, 0 );
@@ -945,6 +957,8 @@ int32_t SX128x::GetLoRaBandwidth( )
 //}
 
 void SX128x::ProcessIrqs() {
+	std::lock_guard<std::mutex> lg(IOLock2);
+
 	RadioPacketTypes_t packetType = PACKET_TYPE_NONE;
 
 //	if (this->PollingMode == true )

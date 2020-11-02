@@ -1129,7 +1129,7 @@ public:
 	virtual ~SX128x() = default;
 
 private:
-	std::mutex IOLock;
+	std::mutex IOLock, IOLock2;
 	/*!
 	 * \brief Holds the internal operating mode of the radio
 	 */
