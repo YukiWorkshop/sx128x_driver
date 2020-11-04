@@ -1160,6 +1160,11 @@ private:
 	 */
 //	bool PollingMode = false;
 
+
+	ModulationParams_t CurrentModParams = {};
+
+	PacketParams_t CurrentPacketParams = {};
+
 	/*!
 	 * \brief Compute the two's complement for a register of size lower than
 	 *        32bits
@@ -1516,14 +1521,14 @@ public:
 	 *
 	 * \param [in]  modParams     A structure describing the modulation parameters
 	 */
-	void SetModulationParams(ModulationParams_t *modParams);
+	void SetModulationParams(const ModulationParams_t& modParams);
 
 	/*!
 	 * \brief Sets the packet parameters
 	 *
 	 * \param [in]  packetParams  A structure describing the packet parameters
 	 */
-	void SetPacketParams(PacketParams_t *packetParams);
+	void SetPacketParams(const PacketParams_t& packetParams);
 
 	/*!
 	 * \brief Gets the last received packet buffer status
@@ -1850,5 +1855,7 @@ public:
 	void ForcePreambleLength(RadioPreambleLengths_t preambleLength);
 
 	static uint16_t GetTimeOnAir(const ModulationParams_t &modparams, const PacketParams_t &pktparams);
+
+	uint16_t GetTimeOnAir();
 };
 

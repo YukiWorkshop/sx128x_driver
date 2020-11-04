@@ -245,40 +245,40 @@ void SX128x::SetBufferBaseAddresses(uint8_t txBaseAddress, uint8_t rxBaseAddress
 	WriteCommand( RADIO_SET_BUFFERBASEADDRESS, buf, 2 );
 }
 
-void SX128x::SetModulationParams(ModulationParams_t *modParams )
+void SX128x::SetModulationParams(const ModulationParams_t& modParams )
 {
 	uint8_t buf[3];
 
 	// Check if required configuration corresponds to the stored packet type
 	// If not, silently update radio packet type
-	if (this->PacketType != modParams->PacketType )
+	if (this->PacketType != modParams.PacketType )
 	{
-		this->SetPacketType( modParams->PacketType );
+		this->SetPacketType( modParams.PacketType );
 	}
 
-	switch( modParams->PacketType )
+	switch( modParams.PacketType )
 	{
 		case PACKET_TYPE_GFSK:
-			buf[0] = modParams->Params.Gfsk.BitrateBandwidth;
-			buf[1] = modParams->Params.Gfsk.ModulationIndex;
-			buf[2] = modParams->Params.Gfsk.ModulationShaping;
+			buf[0] = modParams.Params.Gfsk.BitrateBandwidth;
+			buf[1] = modParams.Params.Gfsk.ModulationIndex;
+			buf[2] = modParams.Params.Gfsk.ModulationShaping;
 			break;
 		case PACKET_TYPE_LORA:
 		case PACKET_TYPE_RANGING:
-			buf[0] = modParams->Params.LoRa.SpreadingFactor;
-			buf[1] = modParams->Params.LoRa.Bandwidth;
-			buf[2] = modParams->Params.LoRa.CodingRate;
-			this->LoRaBandwidth = modParams->Params.LoRa.Bandwidth;
+			buf[0] = modParams.Params.LoRa.SpreadingFactor;
+			buf[1] = modParams.Params.LoRa.Bandwidth;
+			buf[2] = modParams.Params.LoRa.CodingRate;
+			this->LoRaBandwidth = modParams.Params.LoRa.Bandwidth;
 			break;
 		case PACKET_TYPE_FLRC:
-			buf[0] = modParams->Params.Flrc.BitrateBandwidth;
-			buf[1] = modParams->Params.Flrc.CodingRate;
-			buf[2] = modParams->Params.Flrc.ModulationShaping;
+			buf[0] = modParams.Params.Flrc.BitrateBandwidth;
+			buf[1] = modParams.Params.Flrc.CodingRate;
+			buf[2] = modParams.Params.Flrc.ModulationShaping;
 			break;
 		case PACKET_TYPE_BLE:
-			buf[0] = modParams->Params.Ble.BitrateBandwidth;
-			buf[1] = modParams->Params.Ble.ModulationIndex;
-			buf[2] = modParams->Params.Ble.ModulationShaping;
+			buf[0] = modParams.Params.Ble.BitrateBandwidth;
+			buf[1] = modParams.Params.Ble.ModulationIndex;
+			buf[2] = modParams.Params.Ble.ModulationShaping;
 			break;
 		case PACKET_TYPE_NONE:
 			buf[0] = 0;
@@ -287,53 +287,54 @@ void SX128x::SetModulationParams(ModulationParams_t *modParams )
 			break;
 	}
 	WriteCommand( RADIO_SET_MODULATIONPARAMS, buf, 3 );
+	CurrentModParams = modParams;
 }
 
-void SX128x::SetPacketParams(PacketParams_t *packetParams )
+void SX128x::SetPacketParams(const PacketParams_t& packetParams)
 {
 	uint8_t buf[7];
 	// Check if required configuration corresponds to the stored packet type
 	// If not, silently update radio packet type
-	if (this->PacketType != packetParams->PacketType )
+	if (this->PacketType != packetParams.PacketType )
 	{
-		this->SetPacketType( packetParams->PacketType );
+		this->SetPacketType( packetParams.PacketType );
 	}
 
-	switch( packetParams->PacketType )
+	switch( packetParams.PacketType )
 	{
 		case PACKET_TYPE_GFSK:
-			buf[0] = packetParams->Params.Gfsk.PreambleLength;
-			buf[1] = packetParams->Params.Gfsk.SyncWordLength;
-			buf[2] = packetParams->Params.Gfsk.SyncWordMatch;
-			buf[3] = packetParams->Params.Gfsk.HeaderType;
-			buf[4] = packetParams->Params.Gfsk.PayloadLength;
-			buf[5] = packetParams->Params.Gfsk.CrcLength;
-			buf[6] = packetParams->Params.Gfsk.Whitening;
+			buf[0] = packetParams.Params.Gfsk.PreambleLength;
+			buf[1] = packetParams.Params.Gfsk.SyncWordLength;
+			buf[2] = packetParams.Params.Gfsk.SyncWordMatch;
+			buf[3] = packetParams.Params.Gfsk.HeaderType;
+			buf[4] = packetParams.Params.Gfsk.PayloadLength;
+			buf[5] = packetParams.Params.Gfsk.CrcLength;
+			buf[6] = packetParams.Params.Gfsk.Whitening;
 			break;
 		case PACKET_TYPE_LORA:
 		case PACKET_TYPE_RANGING:
-			buf[0] = packetParams->Params.LoRa.PreambleLength;
-			buf[1] = packetParams->Params.LoRa.HeaderType;
-			buf[2] = packetParams->Params.LoRa.PayloadLength;
-			buf[3] = packetParams->Params.LoRa.Crc;
-			buf[4] = packetParams->Params.LoRa.InvertIQ;
+			buf[0] = packetParams.Params.LoRa.PreambleLength;
+			buf[1] = packetParams.Params.LoRa.HeaderType;
+			buf[2] = packetParams.Params.LoRa.PayloadLength;
+			buf[3] = packetParams.Params.LoRa.Crc;
+			buf[4] = packetParams.Params.LoRa.InvertIQ;
 			buf[5] = 0;
 			buf[6] = 0;
 			break;
 		case PACKET_TYPE_FLRC:
-			buf[0] = packetParams->Params.Flrc.PreambleLength;
-			buf[1] = packetParams->Params.Flrc.SyncWordLength;
-			buf[2] = packetParams->Params.Flrc.SyncWordMatch;
-			buf[3] = packetParams->Params.Flrc.HeaderType;
-			buf[4] = packetParams->Params.Flrc.PayloadLength;
-			buf[5] = packetParams->Params.Flrc.CrcLength;
-			buf[6] = packetParams->Params.Flrc.Whitening;
+			buf[0] = packetParams.Params.Flrc.PreambleLength;
+			buf[1] = packetParams.Params.Flrc.SyncWordLength;
+			buf[2] = packetParams.Params.Flrc.SyncWordMatch;
+			buf[3] = packetParams.Params.Flrc.HeaderType;
+			buf[4] = packetParams.Params.Flrc.PayloadLength;
+			buf[5] = packetParams.Params.Flrc.CrcLength;
+			buf[6] = packetParams.Params.Flrc.Whitening;
 			break;
 		case PACKET_TYPE_BLE:
-			buf[0] = packetParams->Params.Ble.ConnectionState;
-			buf[1] = packetParams->Params.Ble.CrcLength;
-			buf[2] = packetParams->Params.Ble.BleTestPayload;
-			buf[3] = packetParams->Params.Ble.Whitening;
+			buf[0] = packetParams.Params.Ble.ConnectionState;
+			buf[1] = packetParams.Params.Ble.CrcLength;
+			buf[2] = packetParams.Params.Ble.BleTestPayload;
+			buf[3] = packetParams.Params.Ble.Whitening;
 			buf[4] = 0;
 			buf[5] = 0;
 			buf[6] = 0;
@@ -349,6 +350,7 @@ void SX128x::SetPacketParams(PacketParams_t *packetParams )
 			break;
 	}
 	WriteCommand( RADIO_SET_PACKETPARAMS, buf, 7 );
+	CurrentPacketParams = packetParams;
 }
 
 void SX128x::ForcePreambleLength(RadioPreambleLengths_t preambleLength )
@@ -1411,6 +1413,11 @@ uint16_t SX128x::GetTimeOnAir(const SX128x::ModulationParams_t &modparams, const
 	return result;
 }
 
+uint16_t SX128x::GetTimeOnAir() {
+	return GetTimeOnAir(CurrentModParams, CurrentPacketParams);
+}
+
+
 void SX128x::HalSpiRead(uint8_t *buffer_in, uint16_t size) {
 	uint8_t useless[size];
 	memset(useless, 0, size);
@@ -1618,3 +1625,4 @@ void SX128x::ReadBuffer(uint8_t offset, uint8_t *buffer, uint8_t size) {
 
 	WaitOnBusy();
 }
+
